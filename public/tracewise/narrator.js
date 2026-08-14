@@ -473,36 +473,38 @@ class Narrator {
         const requestId = ++this._ttsRequestId;
         this.speaking = true;
 
-        // Primary path for Hindi/Hinglish: Gemini TTS.
-        if (this.explainMode === 'hinglish' || this.explainMode === 'hindi') {
-            try {
-                const audioUrl = await this._getTTSAudio(cleanText);
-                if (requestId !== this._ttsRequestId || !this.enabled) return;
+        // Primary path for every language: Gemini TTS via our server route,
+        // played through Web Audio (works inside preview iframes).
+        try {
+            const buffer = await this._getTTSAudio(cleanText);
+            if (requestId !== this._ttsRequestId || !this.enabled) return;
 
-                await new Promise(resolve => {
-                    const audio = new Audio(audioUrl);
-                    this._audio = audio;
+            const ctx = await this._getContext();
+            if (!ctx || !buffer) throw new Error('No audio context.');
+            if (requestId !== this._ttsRequestId || !this.enabled) return;
 
-                    const finish = () => {
-                        if (this._audio === audio) this._audio = null;
-                        this.speaking = false;
-                        resolve();
-                    };
+            await new Promise(resolve => {
+                const source = ctx.createBufferSource();
+                const gain = ctx.createGain();
+                gain.gain.value = this.volume;
+                source.buffer = buffer;
+                source.playbackRate.value = Math.max(0.5, Math.min(2, this.rate));
+                source.connect(gain);
+                gain.connect(ctx.destination);
+                this._source = source;
 
-                    audio.onended = finish;
-                    audio.onerror = finish;
-                    audio.volume = this.volume;
-
-                    audio.play().catch(err => {
-                        console.warn('[Narrator] Gemini audio playback failed:', err.message);
-                        finish();
-                    });
-                });
-                return;
-            } catch (err) {
-                console.warn('[Narrator] Gemini TTS failed; using browser TTS fallback:', err.message);
-            }
+                source.onended = () => {
+                    if (this._source === source) this._source = null;
+                    this.speaking = false;
+                    resolve();
+                };
+                source.start(ctx.currentTime + 0.05);
+            });
+            return;
+        } catch (err) {
+            console.warn('[Narrator] Gemini TTS failed; using browser TTS fallback:', err.message);
         }
+
 
         // Browser TTS fallback for English/other languages or TTS errors.
         await new Promise(resolve => {
