@@ -58,7 +58,7 @@ function TraceWisePage() {
         const script = document.createElement("script");
         script.src = src;
         script.async = false;
-        script.dataset.tracewise = src;
+        script.dataset["tracewise"] = src;
         script.onload = () => resolve();
         script.onerror = () => reject(new Error(`Failed to load ${src}`));
         document.body.appendChild(script);
