@@ -21,6 +21,10 @@ class Narrator {
         this._ttsCache = new Map();
         this._audio = null;
         this._ttsRequestId = 0;
+        this._ctx = null;
+        this._source = null;
+        this._installAudioUnlock();
+
 
         this._initVoices();
     }
