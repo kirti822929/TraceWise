@@ -296,11 +296,43 @@ class Narrator {
     }
 
     /**
+     * Create/resume a shared AudioContext. Media elements are blocked by
+     * autoplay policy inside preview iframes, so all narration plays through
+     * Web Audio, unlocked on the first user gesture.
+     * @private
+     */
+    _installAudioUnlock() {
+        const unlock = () => {
+            try {
+                if (!this._ctx) {
+                    const Ctx = window.AudioContext || window.webkitAudioContext;
+                    if (Ctx) this._ctx = new Ctx();
+                }
+                if (this._ctx && this._ctx.state === 'suspended') this._ctx.resume();
+            } catch (_) { /* ignore */ }
+        };
+        ['pointerdown', 'click', 'keydown', 'touchstart'].forEach(evt => {
+            window.addEventListener(evt, unlock, { capture: true });
+        });
+    }
+
+    async _getContext() {
+        if (!this._ctx) {
+            const Ctx = window.AudioContext || window.webkitAudioContext;
+            if (!Ctx) return null;
+            this._ctx = new Ctx();
+        }
+        if (this._ctx.state === 'suspended') {
+            try { await this._ctx.resume(); } catch (_) { /* ignore */ }
+        }
+        return this._ctx;
+    }
+
+    /**
      * Preload the first slide's audio so Play can start it with less delay.
      */
     prepareSlides(slides) {
         if (!Array.isArray(slides) || !slides.length) return;
-        if (this.explainMode === 'english') return;
         const first = slides[0]?.narration;
         if (first) {
             this._getTTSAudio(first).catch(err => {
@@ -316,8 +348,8 @@ class Narrator {
         const cacheKey = `${this.explainMode}|${this.ttsVoice}|${cleanText}`;
         if (this._ttsCache.has(cacheKey)) return this._ttsCache.get(cacheKey);
 
-        // Hinglish/Hindi narration goes through the app's own server route,
-        // which uses an Indian-accent Gemini voice. No user API key needed.
+        // Narration goes through the app's own server route, which uses an
+        // Indian-accent Gemini voice. No user API key needed.
         let speechText = cleanText;
         if (this.explainMode === 'hinglish') {
             speechText = this._prepareHinglishSpeech(speechText);
@@ -334,13 +366,17 @@ class Narrator {
             throw new Error(`TTS error (${response.status}) ${detail}`.trim());
         }
 
-        const blob = await response.blob();
-        if (!blob || blob.size < 100) throw new Error('TTS returned no audio data.');
+        const bytes = await response.arrayBuffer();
+        if (!bytes || bytes.byteLength < 100) throw new Error('TTS returned no audio data.');
 
-        const url = URL.createObjectURL(blob);
-        this._ttsCache.set(cacheKey, url);
-        return url;
+        const ctx = await this._getContext();
+        if (!ctx) throw new Error('Web Audio is not available.');
+
+        const buffer = await ctx.decodeAudioData(bytes.slice(0));
+        this._ttsCache.set(cacheKey, buffer);
+        return buffer;
     }
+
 
     _pcmBase64ToWav(base64, mimeType = 'audio/L16;rate=24000') {
         const binary = atob(base64);
