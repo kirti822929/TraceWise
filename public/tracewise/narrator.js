@@ -312,79 +312,28 @@ class Narrator {
         const cacheKey = `${this.explainMode}|${this.ttsVoice}|${cleanText}`;
         if (this._ttsCache.has(cacheKey)) return this._ttsCache.get(cacheKey);
 
-        const apiKey = localStorage.getItem('gemini_api_key') || this.ttsApiKey;
-        if (!apiKey) throw new Error('Gemini API key is missing.');
-
+        // Hinglish/Hindi narration goes through the app's own server route,
+        // which uses an Indian-accent Gemini voice. No user API key needed.
         let speechText = cleanText;
         if (this.explainMode === 'hinglish') {
             speechText = this._prepareHinglishSpeech(speechText);
         }
 
-        const prompt = this.explainMode === 'hindi'
-            ? `Speak as a friendly Indian computer science teacher.
-Use natural Indian Hindi pronunciation, a warm teaching tone, and a medium-slow pace.
-Keep DSA/programming terms such as array, hash map, loop, index, target,
-recursion, binary search, time complexity and space complexity in English.
-Do not sound American or British. Do not translate, rewrite, summarize, or add words.
-Speak ONLY the transcript.
-
-Transcript:
-${speechText}`
-            : `Speak as a friendly Indian computer science teacher explaining DSA to an Indian student.
-Use natural Indian Hindi-English (Hinglish) pronunciation and a clear Indian accent.
-Hindi portions should sound like natural spoken Indian Hindi; technical DSA terms stay in English.
-Use a warm, confident, medium-slow teaching pace. Do not sound American or British.
-Do not translate, rewrite, summarize, or add words. Speak ONLY the transcript.
-
-Transcript:
-${speechText}`;
-
-        const endpoint =
-            `https://generativelanguage.googleapis.com/v1beta/models/${this.ttsModel}:generateContent`;
-
-        const response = await fetch(endpoint, {
+        const response = await fetch('/api/public/tts', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'x-goog-api-key': apiKey
-            },
-            body: JSON.stringify({
-                contents: [{ parts: [{ text: prompt }] }],
-                generationConfig: {
-                    responseModalities: ['AUDIO'],
-                    speechConfig: {
-                        voiceConfig: {
-                            prebuiltVoiceConfig: {
-                                voiceName: this.ttsVoice
-                            }
-                        }
-                    }
-                }
-            })
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text: speechText, mode: this.explainMode })
         });
 
         if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(
-                errorData.error?.message || `Gemini TTS error (${response.status})`
-            );
+            const detail = await response.text().catch(() => '');
+            throw new Error(`TTS error (${response.status}) ${detail}`.trim());
         }
 
-        const data = await response.json();
-        const part = data.candidates?.[0]?.content?.parts?.find(
-            p => p.inlineData?.data
-        );
+        const blob = await response.blob();
+        if (!blob || blob.size < 100) throw new Error('TTS returned no audio data.');
 
-        if (!part?.inlineData?.data) {
-            throw new Error('Gemini TTS returned no audio data.');
-        }
-
-        const wavBlob = this._pcmBase64ToWav(
-            part.inlineData.data,
-            part.inlineData.mimeType || 'audio/L16;rate=24000'
-        );
-        const url = URL.createObjectURL(wavBlob);
-
+        const url = URL.createObjectURL(blob);
         this._ttsCache.set(cacheKey, url);
         return url;
     }
