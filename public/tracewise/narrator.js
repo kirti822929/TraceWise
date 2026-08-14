@@ -21,6 +21,10 @@ class Narrator {
         this._ttsCache = new Map();
         this._audio = null;
         this._ttsRequestId = 0;
+        this._ctx = null;
+        this._source = null;
+        this._installAudioUnlock();
+
 
         this._initVoices();
     }
@@ -292,11 +296,43 @@ class Narrator {
     }
 
     /**
+     * Create/resume a shared AudioContext. Media elements are blocked by
+     * autoplay policy inside preview iframes, so all narration plays through
+     * Web Audio, unlocked on the first user gesture.
+     * @private
+     */
+    _installAudioUnlock() {
+        const unlock = () => {
+            try {
+                if (!this._ctx) {
+                    const Ctx = window.AudioContext || window.webkitAudioContext;
+                    if (Ctx) this._ctx = new Ctx();
+                }
+                if (this._ctx && this._ctx.state === 'suspended') this._ctx.resume();
+            } catch (_) { /* ignore */ }
+        };
+        ['pointerdown', 'click', 'keydown', 'touchstart'].forEach(evt => {
+            window.addEventListener(evt, unlock, { capture: true });
+        });
+    }
+
+    async _getContext() {
+        if (!this._ctx) {
+            const Ctx = window.AudioContext || window.webkitAudioContext;
+            if (!Ctx) return null;
+            this._ctx = new Ctx();
+        }
+        if (this._ctx.state === 'suspended') {
+            try { await this._ctx.resume(); } catch (_) { /* ignore */ }
+        }
+        return this._ctx;
+    }
+
+    /**
      * Preload the first slide's audio so Play can start it with less delay.
      */
     prepareSlides(slides) {
         if (!Array.isArray(slides) || !slides.length) return;
-        if (this.explainMode === 'english') return;
         const first = slides[0]?.narration;
         if (first) {
             this._getTTSAudio(first).catch(err => {
@@ -312,8 +348,8 @@ class Narrator {
         const cacheKey = `${this.explainMode}|${this.ttsVoice}|${cleanText}`;
         if (this._ttsCache.has(cacheKey)) return this._ttsCache.get(cacheKey);
 
-        // Hinglish/Hindi narration goes through the app's own server route,
-        // which uses an Indian-accent Gemini voice. No user API key needed.
+        // Narration goes through the app's own server route, which uses an
+        // Indian-accent Gemini voice. No user API key needed.
         let speechText = cleanText;
         if (this.explainMode === 'hinglish') {
             speechText = this._prepareHinglishSpeech(speechText);
@@ -330,13 +366,17 @@ class Narrator {
             throw new Error(`TTS error (${response.status}) ${detail}`.trim());
         }
 
-        const blob = await response.blob();
-        if (!blob || blob.size < 100) throw new Error('TTS returned no audio data.');
+        const bytes = await response.arrayBuffer();
+        if (!bytes || bytes.byteLength < 100) throw new Error('TTS returned no audio data.');
 
-        const url = URL.createObjectURL(blob);
-        this._ttsCache.set(cacheKey, url);
-        return url;
+        const ctx = await this._getContext();
+        if (!ctx) throw new Error('Web Audio is not available.');
+
+        const buffer = await ctx.decodeAudioData(bytes.slice(0));
+        this._ttsCache.set(cacheKey, buffer);
+        return buffer;
     }
+
 
     _pcmBase64ToWav(base64, mimeType = 'audio/L16;rate=24000') {
         const binary = atob(base64);
@@ -433,36 +473,38 @@ class Narrator {
         const requestId = ++this._ttsRequestId;
         this.speaking = true;
 
-        // Primary path for Hindi/Hinglish: Gemini TTS.
-        if (this.explainMode === 'hinglish' || this.explainMode === 'hindi') {
-            try {
-                const audioUrl = await this._getTTSAudio(cleanText);
-                if (requestId !== this._ttsRequestId || !this.enabled) return;
+        // Primary path for every language: Gemini TTS via our server route,
+        // played through Web Audio (works inside preview iframes).
+        try {
+            const buffer = await this._getTTSAudio(cleanText);
+            if (requestId !== this._ttsRequestId || !this.enabled) return;
 
-                await new Promise(resolve => {
-                    const audio = new Audio(audioUrl);
-                    this._audio = audio;
+            const ctx = await this._getContext();
+            if (!ctx || !buffer) throw new Error('No audio context.');
+            if (requestId !== this._ttsRequestId || !this.enabled) return;
 
-                    const finish = () => {
-                        if (this._audio === audio) this._audio = null;
-                        this.speaking = false;
-                        resolve();
-                    };
+            await new Promise(resolve => {
+                const source = ctx.createBufferSource();
+                const gain = ctx.createGain();
+                gain.gain.value = this.volume;
+                source.buffer = buffer;
+                source.playbackRate.value = Math.max(0.5, Math.min(2, this.rate));
+                source.connect(gain);
+                gain.connect(ctx.destination);
+                this._source = source;
 
-                    audio.onended = finish;
-                    audio.onerror = finish;
-                    audio.volume = this.volume;
-
-                    audio.play().catch(err => {
-                        console.warn('[Narrator] Gemini audio playback failed:', err.message);
-                        finish();
-                    });
-                });
-                return;
-            } catch (err) {
-                console.warn('[Narrator] Gemini TTS failed; using browser TTS fallback:', err.message);
-            }
+                source.onended = () => {
+                    if (this._source === source) this._source = null;
+                    this.speaking = false;
+                    resolve();
+                };
+                source.start(ctx.currentTime + 0.05);
+            });
+            return;
+        } catch (err) {
+            console.warn('[Narrator] Gemini TTS failed; using browser TTS fallback:', err.message);
         }
+
 
         // Browser TTS fallback for English/other languages or TTS errors.
         await new Promise(resolve => {
@@ -509,11 +551,17 @@ class Narrator {
         this._stopChromeFix();
         this.synth.cancel();
 
+        if (this._source) {
+            try { this._source.onended = null; this._source.stop(); } catch (_) { /* ignore */ }
+            this._source = null;
+        }
+
         if (this._audio) {
             this._audio.pause();
             this._audio.currentTime = 0;
             this._audio = null;
         }
+
 
         this.speaking = false;
     }
