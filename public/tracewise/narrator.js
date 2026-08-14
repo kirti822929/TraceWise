@@ -551,11 +551,17 @@ class Narrator {
         this._stopChromeFix();
         this.synth.cancel();
 
+        if (this._source) {
+            try { this._source.onended = null; this._source.stop(); } catch (_) { /* ignore */ }
+            this._source = null;
+        }
+
         if (this._audio) {
             this._audio.pause();
             this._audio.currentTime = 0;
             this._audio = null;
         }
+
 
         this.speaking = false;
     }
