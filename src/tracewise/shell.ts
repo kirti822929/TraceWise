@@ -77,7 +77,26 @@ export const TRACEWISE_SHELL = /* html */ `
         </div>
       </div>
     </div>
+
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🎞️</div>
+        <h3>Slide-by-slide video</h3>
+        <p>Auto-generated scenes with progress, speed control and replay.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🗣️</div>
+        <h3>Indian-accent voice</h3>
+        <p>Hinglish and Hindi narration that actually sounds natural.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔍</div>
+        <h3>Dry run + complexity</h3>
+        <p>Watch variables change step by step, then see time & space cost.</p>
+      </div>
+    </div>
   </section>
+
 
   <section id="loading-section" class="hidden">
     <div class="loading-card glass-card">
