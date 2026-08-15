@@ -27,16 +27,17 @@ export const TRACEWISE_SHELL = /* html */ `
 
 <main class="container">
   <section id="input-section">
-    <div class="input-card glass-card">
-      <div class="hero-text">
-        <div class="hero-emoji">🧠</div>
-        <h1>Any DSA problem, <span class="gradient-text">explained like a video</span></h1>
-        <p class="subtitle">Paste a problem and get an animated walkthrough — intuition, pseudocode, dry run, code and complexity — narrated in Hinglish, Hindi or English.</p>
-      </div>
+    <div class="hero-text">
+      <div class="hero-badge"><span class="hero-badge-dot"></span> AI narration in Hinglish · Hindi · English</div>
+      <h1><span class="hero-emoji">🧠</span> Any DSA problem,<br /><span class="gradient-text">explained like a video</span></h1>
+      <p class="subtitle">Paste a problem and get an animated walkthrough — intuition, pseudocode, dry run, code and complexity — narrated in a natural Indian voice.</p>
+    </div>
 
+    <div class="input-card glass-card">
       <div class="input-group">
         <textarea id="problem-input" rows="8" placeholder="Paste your DSA problem statement here..."></textarea>
       </div>
+
 
       <div class="input-options">
         <label>
