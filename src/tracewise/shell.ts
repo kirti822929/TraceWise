@@ -4,8 +4,10 @@
 export const TRACEWISE_SHELL = /* html */ `
 <div class="bg-gradient"></div>
 <div class="bg-grid"></div>
+<div class="bg-orb bg-orb-1"></div>
+<div class="bg-orb bg-orb-2"></div>
 
-<header>
+<header id="app-header">
   <div class="container header-content">
     <div class="logo">
       <div class="logo-icon">🎬</div>
@@ -22,18 +24,20 @@ export const TRACEWISE_SHELL = /* html */ `
   </div>
 </header>
 
+
 <main class="container">
   <section id="input-section">
-    <div class="input-card glass-card">
-      <div class="hero-text">
-        <div class="hero-emoji">🧠</div>
-        <h1>Any DSA problem, <span class="gradient-text">explained like a video</span></h1>
-        <p class="subtitle">Paste a problem and get an animated walkthrough — intuition, pseudocode, dry run, code and complexity — narrated in Hinglish, Hindi or English.</p>
-      </div>
+    <div class="hero-text">
+      <div class="hero-badge"><span class="hero-badge-dot"></span> AI narration in Hinglish · Hindi · English</div>
+      <h1><span class="hero-emoji">🧠</span> Any DSA problem,<br /><span class="gradient-text">explained like a video</span></h1>
+      <p class="subtitle">Paste a problem and get an animated walkthrough — intuition, pseudocode, dry run, code and complexity — narrated in a natural Indian voice.</p>
+    </div>
 
+    <div class="input-card glass-card">
       <div class="input-group">
         <textarea id="problem-input" rows="8" placeholder="Paste your DSA problem statement here..."></textarea>
       </div>
+
 
       <div class="input-options">
         <label>
@@ -73,7 +77,26 @@ export const TRACEWISE_SHELL = /* html */ `
         </div>
       </div>
     </div>
+
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🎞️</div>
+        <h3>Slide-by-slide video</h3>
+        <p>Auto-generated scenes with progress, speed control and replay.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🗣️</div>
+        <h3>Indian-accent voice</h3>
+        <p>Hinglish and Hindi narration that actually sounds natural.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔍</div>
+        <h3>Dry run + complexity</h3>
+        <p>Watch variables change step by step, then see time & space cost.</p>
+      </div>
+    </div>
   </section>
+
 
   <section id="loading-section" class="hidden">
     <div class="loading-card glass-card">
