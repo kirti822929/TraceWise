@@ -4,8 +4,10 @@
 export const TRACEWISE_SHELL = /* html */ `
 <div class="bg-gradient"></div>
 <div class="bg-grid"></div>
+<div class="bg-orb bg-orb-1"></div>
+<div class="bg-orb bg-orb-2"></div>
 
-<header>
+<header id="app-header">
   <div class="container header-content">
     <div class="logo">
       <div class="logo-icon">🎬</div>
@@ -21,6 +23,7 @@ export const TRACEWISE_SHELL = /* html */ `
     </div>
   </div>
 </header>
+
 
 <main class="container">
   <section id="input-section">
