@@ -1,24 +1,55 @@
-# Pixel Perfect Clone
+# TraceWise 🧠
 
-Implement exactly the screenshot and nothing else
+### AI-Powered Visual DSA Learning Platform
 
-This project was built with [Lovable](https://lovable.dev).
+> **Don't just get the solution. Learn how to think.**
 
-## Build with Lovable
+TraceWise is an AI-powered platform that helps students understand **Data Structures and Algorithms** through visual explanations, step-by-step dry runs, and AI-powered narration.
 
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/4d690326-a5b1-4fe3-87cd-1c8d119b7963).
+## ✨ Features
 
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
+- 🤖 AI-generated DSA solutions
+- 🎥 Visual step-by-step explanations
+- 🔄 Interactive dry runs
+- 💻 Code, pseudocode & complexity analysis
+- 🎙️ AI tutor-style narration
+- 🇮🇳 Hindi & Hinglish support
+- ✍️ Write your own approach
+- 🧠 AI analysis and feedback on your approach
 
-## Development
+## 🔄 How It Works
 
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+```text
+DSA Problem
+     ↓
+AI Explanation
+     ↓
+Visual Dry Run
+     ↓
+AI Tutor Narration
+     ↓
+Write Your Approach
+     ↓
+AI Feedback
+🛠️ Tech Stack
+React
+TypeScript
+Vite
+Tailwind CSS
+Google Gemini API
+AI-powered visualization & narration
+🎯 Why TraceWise?
 
-```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
-npm run dev
-```
+Sometimes reading a long DSA explanation isn't enough. TraceWise makes learning more visual, interactive, and easier to understand, especially for learners who prefer Hindi or Hinglish.
+
+🚧 Status
+
+Currently in Development
+
+More features like AI quizzes, personalized learning, interview mode, and advanced visualizations are coming soon.
+
+👨‍💻 Author
+
+Kirti Vishwakarma
+
+B.Tech CSE (AI & ML)
