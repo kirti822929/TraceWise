@@ -79,7 +79,7 @@ export const TRACEWISE_SHELL = /* html */ `
 
       <div class="input-actions">
         <button class="btn-generate" id="generate-btn">
-          <span class="btn-label">✨ Generate Video</span>
+          <span class="btn-label">Generate Explanation</span>
         </button>
         <span class="shortcut-hint">Ctrl + Enter</span>
       </div>
