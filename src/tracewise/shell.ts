@@ -97,6 +97,15 @@ export const TRACEWISE_SHELL = /* html */ `
       </div>
     </div>
 
+    <div class="workspace-cards">
+      <div class="ws-card"><div class="ws-icon">💡</div><h4>Intuition</h4><p>Why the approach works, before any code.</p></div>
+      <div class="ws-card"><div class="ws-icon">🔍</div><h4>Dry Run</h4><p>Variables changing step by step, visually.</p></div>
+      <div class="ws-card"><div class="ws-icon">⌨️</div><h4>Code</h4><p>Clean solution in Python, C++ or Java.</p></div>
+      <div class="ws-card"><div class="ws-icon">📈</div><h4>Complexity</h4><p>Time and space cost, explained simply.</p></div>
+    </div>
+
+
+
     <div class="feature-grid">
       <div class="feature-card">
         <div class="feature-icon">🎞️</div>
