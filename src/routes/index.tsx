@@ -24,9 +24,10 @@ export const Route = createFileRoute("/")({
     links: [
       { rel: "stylesheet", href: "/tracewise/styles.css" },
       { rel: "stylesheet", href: "/tracewise/3d.css" },
+      { rel: "stylesheet", href: "/tracewise/futuristic.css" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap",
       },
     ],
   }),
@@ -39,6 +40,7 @@ const SCRIPTS = [
   "/tracewise/player.js",
   "/tracewise/app.js",
   "/tracewise/tilt.js",
+  "/tracewise/scene.js",
 ];
 
 
