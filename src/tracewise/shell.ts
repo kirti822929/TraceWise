@@ -11,9 +11,20 @@ export const TRACEWISE_SHELL = /* html */ `
   <div class="bg-cube bg-cube-1"><i class="face f1"></i><i class="face f2"></i><i class="face f3"></i><i class="face f4"></i><i class="face f5"></i><i class="face f6"></i></div>
   <div class="bg-cube bg-cube-2"><i class="face f1"></i><i class="face f2"></i><i class="face f3"></i><i class="face f4"></i><i class="face f5"></i><i class="face f6"></i></div>
   <div class="bg-cube bg-cube-3"><i class="face f1"></i><i class="face f2"></i><i class="face f3"></i><i class="face f4"></i><i class="face f5"></i><i class="face f6"></i></div>
+  <div class="bg-shape bg-sphere bg-sphere-1"></div>
+  <div class="bg-shape bg-sphere bg-sphere-2"></div>
+  <div class="bg-shape bg-sphere bg-sphere-3"></div>
+  <div class="bg-shape bg-ring bg-ring-1"></div>
+  <div class="bg-shape bg-ring bg-ring-2"></div>
+  <div class="bg-shape bg-ring bg-ring-3"></div>
+  <div class="bg-shape bg-pane bg-pane-1"></div>
+  <div class="bg-shape bg-pane bg-pane-2"></div>
   <div class="bg-dust"></div>
 </div>
+<div class="bg-hero-glow" aria-hidden="true"></div>
+<div class="bg-horizon" aria-hidden="true"></div>
 <div class="bg-vignette" aria-hidden="true"></div>
+
 
 <header id="app-header">
   <div class="container header-content">
@@ -37,7 +48,7 @@ export const TRACEWISE_SHELL = /* html */ `
   <section id="input-section">
     <div class="hero-text">
       <div class="hero-badge"><span class="hero-badge-dot"></span> AI narration in Hinglish · Hindi · English</div>
-      <h1><span class="hero-emoji">🧠</span> Any DSA problem,<br /><span class="gradient-text">explained like a video</span></h1>
+      <h1>Any DSA problem,<br /><span class="gradient-text">explained like a video</span></h1>
       <p class="subtitle">Paste a problem and get an animated walkthrough — intuition, pseudocode, dry run, code and complexity — narrated in a natural Indian voice.</p>
     </div>
 
@@ -68,7 +79,7 @@ export const TRACEWISE_SHELL = /* html */ `
 
       <div class="input-actions">
         <button class="btn-generate" id="generate-btn">
-          <span class="btn-label">✨ Generate Video</span>
+          <span class="btn-label">Generate Explanation</span>
         </button>
         <span class="shortcut-hint">Ctrl + Enter</span>
       </div>
@@ -85,6 +96,15 @@ export const TRACEWISE_SHELL = /* html */ `
         </div>
       </div>
     </div>
+
+    <div class="workspace-cards">
+      <div class="ws-card"><div class="ws-icon">💡</div><h4>Intuition</h4><p>Why the approach works, before any code.</p></div>
+      <div class="ws-card"><div class="ws-icon">🔍</div><h4>Dry Run</h4><p>Variables changing step by step, visually.</p></div>
+      <div class="ws-card"><div class="ws-icon">⌨️</div><h4>Code</h4><p>Clean solution in Python, C++ or Java.</p></div>
+      <div class="ws-card"><div class="ws-icon">📈</div><h4>Complexity</h4><p>Time and space cost, explained simply.</p></div>
+    </div>
+
+
 
     <div class="feature-grid">
       <div class="feature-card">
