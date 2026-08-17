@@ -48,7 +48,7 @@ export const TRACEWISE_SHELL = /* html */ `
   <section id="input-section">
     <div class="hero-text">
       <div class="hero-badge"><span class="hero-badge-dot"></span> AI narration in Hinglish · Hindi · English</div>
-      <h1><span class="hero-emoji">🧠</span> Any DSA problem,<br /><span class="gradient-text">explained like a video</span></h1>
+      <h1>Any DSA problem,<br /><span class="gradient-text">explained like a video</span></h1>
       <p class="subtitle">Paste a problem and get an animated walkthrough — intuition, pseudocode, dry run, code and complexity — narrated in a natural Indian voice.</p>
     </div>
 
