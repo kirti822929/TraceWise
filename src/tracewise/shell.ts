@@ -11,9 +11,20 @@ export const TRACEWISE_SHELL = /* html */ `
   <div class="bg-cube bg-cube-1"><i class="face f1"></i><i class="face f2"></i><i class="face f3"></i><i class="face f4"></i><i class="face f5"></i><i class="face f6"></i></div>
   <div class="bg-cube bg-cube-2"><i class="face f1"></i><i class="face f2"></i><i class="face f3"></i><i class="face f4"></i><i class="face f5"></i><i class="face f6"></i></div>
   <div class="bg-cube bg-cube-3"><i class="face f1"></i><i class="face f2"></i><i class="face f3"></i><i class="face f4"></i><i class="face f5"></i><i class="face f6"></i></div>
+  <div class="bg-shape bg-sphere bg-sphere-1"></div>
+  <div class="bg-shape bg-sphere bg-sphere-2"></div>
+  <div class="bg-shape bg-sphere bg-sphere-3"></div>
+  <div class="bg-shape bg-ring bg-ring-1"></div>
+  <div class="bg-shape bg-ring bg-ring-2"></div>
+  <div class="bg-shape bg-ring bg-ring-3"></div>
+  <div class="bg-shape bg-pane bg-pane-1"></div>
+  <div class="bg-shape bg-pane bg-pane-2"></div>
   <div class="bg-dust"></div>
 </div>
+<div class="bg-hero-glow" aria-hidden="true"></div>
+<div class="bg-horizon" aria-hidden="true"></div>
 <div class="bg-vignette" aria-hidden="true"></div>
+
 
 <header id="app-header">
   <div class="container header-content">
